@@ -11,8 +11,10 @@ import com.ruirui.orbit.network.HttpClientFactory
 import com.ruirui.orbit.network.api.AuthApi
 import com.ruirui.orbit.network.api.DeviceApi
 import com.ruirui.orbit.network.api.FriendsApi
+import com.ruirui.orbit.network.api.HttpPresenceApi
 import com.ruirui.orbit.network.api.KeysApi
 import com.ruirui.orbit.network.api.LocationApi
+import com.ruirui.orbit.network.api.PresenceApi
 import com.ruirui.orbit.repository.AuthRepository
 import com.ruirui.orbit.repository.AuthRepositoryImpl
 import com.ruirui.orbit.repository.FriendRepository
@@ -20,6 +22,7 @@ import com.ruirui.orbit.repository.FriendRepositoryImpl
 import com.ruirui.orbit.repository.LocationRepository
 import com.ruirui.orbit.repository.LocationRepositoryImpl
 import com.ruirui.orbit.storage.AndroidSecureStorage
+import com.ruirui.orbit.sync.PresenceManager
 import com.ruirui.orbit.sync.SyncOrchestrator
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -51,8 +54,12 @@ class AppContainer(private val context: Context) {
     val locationApi by lazy { LocationApi(httpClient) }
     val deviceApi by lazy { DeviceApi(httpClient) }
 
+    val presenceApi: PresenceApi by lazy { HttpPresenceApi(httpClient) }
+
     // Managers and Repositories
     val preKeyManager by lazy { PreKeyManagerImpl(crypto, secureStorage, keysApi, database) }
+
+    val presenceManager: PresenceManager by lazy { PresenceManager(presenceApi, appScope) }
 
     val authRepository: AuthRepository by lazy {
         AuthRepositoryImpl(

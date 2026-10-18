@@ -66,7 +66,9 @@ class LocationSharingService : Service() {
     @RequiresPermission(allOf = [Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION])
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         val forcedMode = intent?.getStringExtra("mode")
-        val targetMode = if (forcedMode == "HIGH") Mode.HIGH else Mode.LOW
+        val targetMode = if (forcedMode == OrbitMessagingService.SyncMode.HIGH) Mode.HIGH else Mode.LOW
+
+        Log.d("Orbit", "onStartCommand: forcedMode='$forcedMode', resolved targetMode=$targetMode")
 
         if (targetMode != currentMode || locationCallback == null) {
             startLocationUpdates(targetMode)
@@ -129,6 +131,8 @@ class LocationSharingService : Service() {
     }
 
     private fun handleNewLocation(location: Location) {
+        Log.d("Orbit", "New location: $location")
+
         val last = lastSentLocation
         if (last != null && last.distanceTo(location) < DISPLACEMENT_THRESHOLD_METERS) {
             return
