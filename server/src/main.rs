@@ -31,6 +31,11 @@ async fn main() {
 
     // Initialize Push Service if credentials are provided
     let push_service = PushService::new().ok().map(std::sync::Arc::new);
+    if push_service.is_some() {
+        println!("✅ Push Service (FCM) initialized!");
+    } else {
+        println!("⚠️ Push Service disabled (missing credentials).");
+    }
 
     // Define App State
     let state = AppState {
