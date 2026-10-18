@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -52,6 +53,7 @@ dependencies {
 
     // Push Notifications (Firebase Cloud Messaging)
     implementation(libs.firebase.messaging)
+    implementation(platform(libs.firebase.bom))
 
     // Jetpack Compose
     implementation(platform(libs.androidx.compose.bom))
