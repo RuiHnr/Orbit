@@ -24,7 +24,6 @@ import com.ruirui.orbit.sync.SyncOrchestrator
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-
 class AppContainer(private val context: Context) {
     val appScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
@@ -37,8 +36,7 @@ class AppContainer(private val context: Context) {
     val database by lazy { OrbitDatabase(DriverFactory(context).createDriver()) }
 
     // Networking
-    // TODO: Point to backend URL
-    val baseUrl = "http://192.168.178.27:3000"
+    val baseUrl = "SERVER_IP"
     val httpClient by lazy {
         HttpClientFactory.create(
             secureStorage = secureStorage,

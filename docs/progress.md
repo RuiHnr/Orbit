@@ -1,6 +1,6 @@
 # Project Progress & Roadmap: Orbit
 
-**Last Updated:** September 2026
+**Last Updated:** October 2026
 
 ---
 
@@ -82,8 +82,23 @@ Orbit is currently in **Phase 4: Implementation** of its roadmap.
     - [x] Repository layer with reactive `StateFlow` streams.
     - [x] Comprehensive Test Suite (E2E Message Exchange and Mock APIs).
 - [ ] **UI Integration:**
-    - Connect Android Jetpack Compose UI and background `LocationService` to the KMP networking
+    - [x] Initial Authentication screen (`AuthScreen` + `AuthContent`) with reactive state flow.
+    - [x] Friends and Pending Requests screen (`FriendsScreen` + `FriendsContent`).
+    - [x] Main authenticated navigation shell (`MainScreen` with Material 3 `NavigationBar`).
+    - [ ] Map screen implementation & real-time friend location markers.
+    - [ ] Connect Android Jetpack Compose UI and background `LocationService` to the KMP networking
       layer.
+
+### Priority 4: User Identity, Registration Validation & Account Recovery Roadmap
+
+- [ ] **Immediate Registration & Username Validation:**
+    - [ ] Update backend `POST /users/register` to catch PostgreSQL error `23505` (unique constraint violation) and return `409 Conflict` with JSON error payload (`{"error": "Username already taken"}`).
+    - [ ] Map `409 Conflict` on KMP client and display "Username already taken" on `AuthContent`.
+    - [ ] (Optional) Add debounced `GET /users/check?username={username}` endpoint for real-time availability feedback as the user types.
+- [ ] **Account Recovery & Multi-Device Architecture (E2EE):**
+    - [x] **Phase 1 (Current MVP):** Device-Bound Identity. Cryptographic keys stored in OS-secure hardware (Android Keystore / iOS Keychain). Fast iteration while finalizing core location sharing.
+    - [ ] **Phase 2 (Account Backup):** BIP-39 12-word recovery seed phrase for deterministic derivation of Signal identity keys. Preserves zero-knowledge privacy, requires no SMS/email infrastructure, and enables account restoration on new devices.
+    - [ ] **Phase 3 (Multi-Device / Passkeys Evaluation):** Evaluate Passkeys (FIDO2/WebAuthn) or client-side encrypted key vault blobs for multi-device synchronization.
 
 ---
 

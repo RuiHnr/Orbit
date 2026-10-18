@@ -16,12 +16,18 @@ import com.ruirui.orbit.android.app.OrbitApp
 import com.ruirui.orbit.android.theme.OrbitTheme
 import com.ruirui.orbit.android.ui.auth.AuthScreen
 import com.ruirui.orbit.android.ui.auth.AuthViewModel
+import com.ruirui.orbit.android.ui.friends.FriendsViewModel
+import com.ruirui.orbit.android.ui.main.MainScreen
 import com.ruirui.orbit.repository.AuthState
 
 class MainActivity : ComponentActivity() {
 
     private val authViewModel: AuthViewModel by viewModels {
         AuthViewModel.provideFactory(OrbitApp.instance.container.authRepository)
+    }
+
+    private val friendsViewModel: FriendsViewModel by viewModels {
+        FriendsViewModel.provideFactory(OrbitApp.instance.container.friendRepository)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,20 +50,11 @@ class MainActivity : ComponentActivity() {
                     is AuthState.Unauthenticated -> {
                         AuthScreen(
                             viewModel = authViewModel,
-                            onRegistrationSuccess = {
-                                // Handled automatically via authState StateFlow update
-                            }
                         )
                     }
 
                     is AuthState.Authenticated -> {
-                        // Placeholder for MainMapScreen
-                        Box(
-                            modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text("You are logged in as user ${state.userId}!")
-                        }
+                        MainScreen(friendsViewModel = friendsViewModel)
                     }
                 }
             }
