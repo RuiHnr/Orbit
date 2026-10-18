@@ -36,8 +36,7 @@ class AppContainer(private val context: Context) {
     val database by lazy { OrbitDatabase(DriverFactory(context).createDriver()) }
 
     // Networking
-    //val baseUrl = "SERVER_IP"
-    val baseUrl = "http://192.168.178.36:3000"
+    val baseUrl = "SERVER_IP"
     val httpClient by lazy {
         HttpClientFactory.create(
             secureStorage = secureStorage,
