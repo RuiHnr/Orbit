@@ -49,6 +49,8 @@ interface AuthRepository {
      * Clears local tokens and identity keys, transitioning the app to [AuthState.Unauthenticated].
      */
     suspend fun logout()
+
+    suspend fun checkUsernameAvailability(username: String): Result<Boolean>
 }
 
 class AuthRepositoryImpl(
@@ -117,5 +119,9 @@ class AuthRepositoryImpl(
             // Future: clear all ratchet session states here too
         }
         _authState.value = AuthState.Unauthenticated
+    }
+
+    override suspend fun checkUsernameAvailability(username: String): Result<Boolean> {
+        return authApi.checkUsername(username).map { it.available }
     }
 }

@@ -30,3 +30,13 @@ data class RegisterResponse(
     val userId: String,
     val token: String
 )
+
+@Serializable
+data class CheckUserNameRequest(
+    val username: String
+)
+
+@Serializable
+data class CheckUsernameResponse(
+    val available: Boolean
+)
