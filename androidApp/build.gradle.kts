@@ -8,7 +8,7 @@ android {
     compileSdk = 37
 
     defaultConfig {
-        applicationId = "com.ruirui.orbit.android"
+        applicationId = "com.ruirui.orbit"
         minSdk = 26
         targetSdk = 37
         versionCode = 1
