@@ -15,15 +15,16 @@ pub(crate) async fn register_user(
 ) -> Result<impl IntoResponse, StatusCode> {
     let user_id = db::create_user(&state.db, &payload).await.map_err(|e| {
         // Check for PostgreSQL 23505 (unique_violation on username)
-        if let sqlx::Error::Database(ref db_err) = e {
-            if db_err.code().as_deref() == Some("23505") {
-                eprintln!(
-                    "Registration rejected: Username '{}' is already taken",
-                    payload.username
-                );
-                return StatusCode::CONFLICT; // 409
-            }
+        if let sqlx::Error::Database(ref db_err) = e
+            && db_err.code().as_deref() == Some("23505")
+        {
+            eprintln!(
+                "Registration rejected: Username '{}' is already taken",
+                payload.username
+            );
+            return StatusCode::CONFLICT; // 409
         }
+
         eprintln!("DB-Error while registering: {}", e);
         StatusCode::INTERNAL_SERVER_ERROR
     })?;
