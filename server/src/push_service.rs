@@ -95,13 +95,13 @@ impl PushService {
         let service_account = match CustomServiceAccount::from_file(&creds_path) {
             Ok(sa) => {
                 println!("✅ FCM credentials loaded from '{}'", creds_path);
-                if let Ok(file_content) = std::fs::read_to_string(&creds_path) {
-                    if let Ok(json_val) = serde_json::from_str::<serde_json::Value>(&file_content) {
-                        if let Some(pid) = json_val.get("project_id").and_then(|v| v.as_str()) {
-                            project_id = Some(pid.to_string());
-                        }
-                    }
+                if let Ok(file_content) = std::fs::read_to_string(&creds_path)
+                    && let Ok(json_val) = serde_json::from_str::<serde_json::Value>(&file_content)
+                    && let Some(pid) = json_val.get("project_id").and_then(|v| v.as_str())
+                {
+                    project_id = Some(pid.to_string());
                 }
+
                 Some(Arc::new(sa))
             }
             Err(e) => {
