@@ -1,5 +1,6 @@
 package com.ruirui.orbit.android.ui.friends
 
+import com.ruirui.orbit.android.ui.components.ErrorMessageCard
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -52,7 +53,8 @@ fun FriendsContentPreview() {
     val sampleState = FriendsUiState(
         friends = sampleFriends,
         pendingRequests = sampleRequests,
-        isSyncing = false
+        isSyncing = false,
+        errorMessage = "Error Message"
     )
 
     // Wrap in MaterialTheme for consistent styling
@@ -117,33 +119,10 @@ fun FriendsContent(
             }
 
             state.errorMessage?.let { error ->
-                Card(
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp)
-                ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(12.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = error,
-                            color = MaterialTheme.colorScheme.onErrorContainer,
-                            modifier = Modifier.weight(1f)
-                        )
-                        IconButton(onClick = { onIntent(FriendsUiIntent.ClearError) }) {
-                            Icon(
-                                Icons.Default.Close,
-                                contentDescription = "Dismiss",
-                                tint = MaterialTheme.colorScheme.onErrorContainer
-                            )
-                        }
-                    }
-                }
+                ErrorMessageCard(
+                    errorMessage = error,
+                    onDismiss = { onIntent(FriendsUiIntent.ClearError) }
+                )
             }
 
             when (selectedTab) {

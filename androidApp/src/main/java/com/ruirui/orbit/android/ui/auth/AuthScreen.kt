@@ -18,20 +18,16 @@ import com.ruirui.orbit.android.theme.OrbitTheme
 @Composable
 fun AuthScreen(
     viewModel: AuthViewModel,
-    onRegistrationSuccess: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-
-    LaunchedEffect(uiState.isSuccess) {
-        if (uiState.isSuccess) onRegistrationSuccess()
-    }
 
     // Passes state down to the stateless AuthContent
     AuthContent(
         uiState = uiState,
         onUsernameChanged = viewModel::onUsernameChanged,
         onRegister = viewModel::onRegister,
+        onDismissError = viewModel::clearError,
         modifier = modifier
     )
 }

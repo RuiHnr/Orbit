@@ -13,4 +13,9 @@ fun FriendsScreen(
 ) {
     val state by viewModel.uiState.collectAsState()
 
+    FriendsContent(
+        state = state,
+        onIntent = viewModel::handleIntent,
+        modifier = modifier
+    )
 }
