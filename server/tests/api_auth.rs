@@ -28,5 +28,5 @@ async fn test_register_duplicate_username(pool: sqlx::PgPool) {
         })
         .await;
 
-    assert_eq!(res.status_code(), StatusCode::BAD_REQUEST);
+    assert_eq!(res.status_code(), StatusCode::CONFLICT);
 }
