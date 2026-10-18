@@ -19,6 +19,8 @@ import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.ruirui.orbit.android.app.OrbitApp
+import com.ruirui.orbit.android.events.AppEventBus
+import com.ruirui.orbit.android.events.OrbitEvent
 import com.ruirui.orbit.repository.LocationRepository
 import com.ruirui.orbit.sync.SyncOrchestrator
 import kotlinx.coroutines.CoroutineScope
@@ -88,6 +90,9 @@ class LocationSharingService : Service() {
             .setOngoing(true)
             .build()
         startForeground(NOTIFICATION_ID, notification)
+        AppEventBus.emit(
+            OrbitEvent.NotificationShown("Orbit is sharing your location")
+        )
     }
 
     @RequiresPermission(anyOf = [Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION])
@@ -112,6 +117,9 @@ class LocationSharingService : Service() {
             fusedLocationClient.requestLocationUpdates(request, callback, Looper.getMainLooper())
             locationCallback = callback
             currentMode = mode
+            AppEventBus.emit(
+                OrbitEvent.PriorityChanged(newMode = mode.name)
+            )
         } catch (e: SecurityException) {
             Log.e("Orbit", "Lost location permissions", e)
         }
@@ -128,7 +136,18 @@ class LocationSharingService : Service() {
         val orchestrator: SyncOrchestrator = OrbitApp.instance.container.syncOrchestrator
 
         serviceScope.launch {
-            repo.submitLocalLocation(location.latitude, location.longitude)
+            val friendsCount = repo.getFriendCount()
+            val sendResult = repo.submitLocalLocation(location.latitude, location.longitude)
+
+            if (sendResult.isSuccess) {
+                AppEventBus.emit(
+                    OrbitEvent.LocationSent(location.latitude, location.longitude, friendsCount)
+                )
+            } else {
+                AppEventBus.emit(
+                    OrbitEvent.SyncError("Send failed: ${sendResult.exceptionOrNull()?.message}")
+                )
+            }
             orchestrator.syncInboxOnly()
         }
     }
