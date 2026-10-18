@@ -5,8 +5,14 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -24,7 +30,9 @@ fun AuthScreenPreviewLight() {
     val sampleState = AuthUiState(
         usernameInput = "alice",
         isLoading = false,
-        errorMessage = "Error occurred"
+        errorMessage = "Error occurred",
+        isCheckingUsername = false,
+        isUsernameAvailable = true
     )
 
     OrbitTheme(darkTheme = true) {
@@ -56,7 +64,24 @@ fun AuthContent(
             OutlinedTextField(
                 value = uiState.usernameInput,
                 onValueChange = onUsernameChanged,
-                label = { Text("Choose a username") }
+                label = { Text("Choose a username") },
+                singleLine = true,
+                isError = uiState.isUsernameAvailable == false,
+                trailingIcon = {
+                    if (uiState.isCheckingUsername) {
+                        CircularProgressIndicator(modifier = Modifier.size(18.dp), strokeWidth = 2.dp)
+                    } else if (uiState.isUsernameAvailable == true) {
+                        Icon(Icons.Default.Check,
+                            contentDescription = "Available",
+                            tint = MaterialTheme.colorScheme.primary
+                            )
+                    } else if (uiState.isUsernameAvailable == false) {
+                        Icon(Icons.Default.Close,
+                            contentDescription = "Unavailable",
+                            tint = MaterialTheme.colorScheme.error
+                            )
+                    }
+                }
             )
 
             Button(
