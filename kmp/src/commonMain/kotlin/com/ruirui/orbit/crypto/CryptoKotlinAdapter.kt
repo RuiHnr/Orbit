@@ -25,6 +25,9 @@ import dev.whyoleg.cryptography.algorithms.XDH
  */
 class CryptoKotlinAdapter(private val provider: CryptographyProvider = CryptographyProvider.Default) :
     Crypto {
+    init {
+        ensureCryptoProviders()
+    }
     override suspend fun hkdf(
         ikm: ByteArray,
         salt: ByteArray,

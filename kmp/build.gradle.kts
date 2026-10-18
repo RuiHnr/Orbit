@@ -54,6 +54,7 @@ kotlin {
             implementation("androidx.datastore:datastore-preferences:1.2.1")
             implementation(libs.ktor.client.okhttp)
             implementation(libs.sqldelight.android.driver)
+            implementation(libs.bouncycastle.provider)
         }
         iosMain.dependencies {
             implementation(libs.sqldelight.native.driver)

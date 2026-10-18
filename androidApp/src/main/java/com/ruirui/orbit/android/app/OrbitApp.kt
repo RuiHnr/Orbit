@@ -1,6 +1,7 @@
 package com.ruirui.orbit.android.app
 
 import android.app.Application
+import com.ruirui.orbit.crypto.ensureCryptoProviders
 
 class OrbitApp : Application() {
 
@@ -9,6 +10,7 @@ class OrbitApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        ensureCryptoProviders()
         instance = this
         container = AppContainer(this)
     }
