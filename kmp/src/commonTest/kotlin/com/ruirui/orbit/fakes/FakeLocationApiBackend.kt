@@ -10,11 +10,7 @@ class FakeLocationApiBackend {
     
     fun submitMessage(senderId: String, request: SubmitMessageRequest) {
         val list = inboxes.getOrPut(request.receiverId) { mutableListOf() }
-        val envelope = kotlinx.serialization.json.Json.decodeFromString(
-            com.ruirui.orbit.models.SignalMessageEnvelope.serializer(),
-            request.encryptedBlob
-        )
-        list.add(InboxMessage(senderId, envelope))
+        list.add(InboxMessage(senderId, request.encryptedBlob))
     }
     
     fun getInbox(receiverId: String): List<InboxMessage> {

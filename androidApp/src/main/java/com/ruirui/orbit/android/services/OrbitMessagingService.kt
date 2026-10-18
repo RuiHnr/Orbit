@@ -39,17 +39,13 @@ class OrbitMessagingService : FirebaseMessagingService() {
      */
     override fun onNewToken(token: String) {
         super.onNewToken(token)
-        // Since Firebase's onNewToken is synchronous, launch a coroutine to send the token
         CoroutineScope(Dispatchers.IO).launch {
-            try {
-                OrbitApp.instance.container.deviceApi.postTokens(
-                    DeviceToken(
-                        fcmToken = token,
-                        apnsToken = null
-                    )
-                )
-            } catch (e: Exception) {
-                Log.e("Orbit", "Failed to send FCM token", e)
+            OrbitApp.instance.container.deviceApi.postTokens(
+                DeviceToken(fcmToken = token, apnsToken = null)
+            ).onSuccess {
+                Log.d("Orbit", "Rotated FCM token sent to server")
+            }.onFailure {
+                Log.e("Orbit", "Failed to send rotated FCM token", it)
             }
         }
     }
@@ -60,6 +56,7 @@ class OrbitMessagingService : FirebaseMessagingService() {
      * @param message The received FCM message
      */
     override fun onMessageReceived(message: RemoteMessage) {
+        Log.d("Orbit", "FCM push received: ${message.data}")
         if (message.data["action"] == "sync") {
             // If it's a sync mode sync notification
             val mode = message.data["mode"]

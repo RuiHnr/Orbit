@@ -130,7 +130,8 @@ class LocationRepositoryImpl(
         val inboxMessages = inboxResponse.messages
 
         inboxMessages.forEach { message ->
-            val jsonString = decryptFromFriend(message.senderId, message.encryptedPayload)
+            val envelope = Json.decodeFromString<SignalMessageEnvelope>(message.encryptedPayload)
+            val jsonString = decryptFromFriend(message.senderId, envelope)
 
             // 4. Parse coordinates, save to DB (which updates UI)
             val location: LocationPayload = Json.decodeFromString(jsonString)

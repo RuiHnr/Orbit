@@ -11,9 +11,14 @@ async fn notify_friends_of_presence(
     user_id: Uuid,
     mode: SyncMode,
 ) -> Result<(), StatusCode> {
+    println!("Received presence heartbeat from user: {}", user_id);
     let friend_tokens = db::get_friends_device_tokens(&state.db, user_id)
         .await
         .or_500()?;
+    println!(
+        "Found {} friend device token(s) to notify",
+        friend_tokens.len()
+    );
 
     if let Some(push_service) = &state.push_service {
         for tokens in friend_tokens {
