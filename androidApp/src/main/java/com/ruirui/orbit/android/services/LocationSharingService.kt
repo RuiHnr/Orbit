@@ -122,6 +122,9 @@ class LocationSharingService : Service() {
             )
         } catch (e: SecurityException) {
             Log.e("Orbit", "Lost location permissions", e)
+            AppEventBus.emit(
+                OrbitEvent.SyncError("Location permission revoked")
+            )
         }
     }
 

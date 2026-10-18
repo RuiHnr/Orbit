@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,6 +23,7 @@ import com.ruirui.orbit.android.ui.auth.AuthViewModel
 import com.ruirui.orbit.android.ui.friends.FriendsViewModel
 import com.ruirui.orbit.android.ui.main.MainScreen
 import com.ruirui.orbit.android.ui.map.MapViewModel
+import com.ruirui.orbit.android.ui.permissions.PermissionHandler
 import com.ruirui.orbit.repository.AuthState
 
 class MainActivity : ComponentActivity() {
@@ -66,16 +68,17 @@ class MainActivity : ComponentActivity() {
                     }
 
                     is AuthState.Authenticated -> {
-                        // TODO: Permission Checks
-
-                        // Start foreground service if not already running
-                        val intent = Intent(this, LocationSharingService::class.java)
-                        ContextCompat.startForegroundService(this, intent)
-
-                        MainScreen(
-                            friendsViewModel = friendsViewModel,
-                            mapViewModel = mapViewModel
-                        )
+                        PermissionHandler {
+                            LaunchedEffect(Unit) {
+                                // Start foreground service if not already running
+                                val intent = Intent(this@MainActivity, LocationSharingService::class.java)
+                                ContextCompat.startForegroundService(this@MainActivity, intent)
+                            }
+                            MainScreen(
+                                friendsViewModel = friendsViewModel,
+                                mapViewModel = mapViewModel
+                            )
+                        }
                     }
                 }
             }

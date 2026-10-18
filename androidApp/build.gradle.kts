@@ -41,6 +41,7 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.material)
     implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.accompanist.permissions)
 
     // Coroutines
     implementation(libs.kotlinx.coroutines.core)
