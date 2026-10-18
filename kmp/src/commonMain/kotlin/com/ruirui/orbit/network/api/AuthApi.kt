@@ -1,9 +1,12 @@
 package com.ruirui.orbit.network.api
 
+import com.ruirui.orbit.models.CheckUsernameResponse
 import com.ruirui.orbit.models.RegisterRequest
 import com.ruirui.orbit.models.RegisterResponse
 import com.ruirui.orbit.network.safeApiCall
 import io.ktor.client.HttpClient
+import io.ktor.client.request.get
+import io.ktor.client.request.parameter
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 
@@ -21,6 +24,12 @@ class AuthApi(private val client: HttpClient) {
     suspend fun register(request: RegisterRequest): Result<RegisterResponse> = safeApiCall {
         client.post("/users/register") {
             setBody(request)
+        }
+    }
+
+    suspend fun checkUsername(username: String): Result<CheckUsernameResponse> = safeApiCall {
+        client.get("users/check") {
+            parameter("username", username)
         }
     }
 }

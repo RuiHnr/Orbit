@@ -56,5 +56,6 @@ pub fn build_router(state: AppState) -> Router {
             get(|| async { "Welcome to the Orbit Server! (Status: Online)" }),
         )
         .route("/users/register", post(handlers::auth::register_user))
+        .route("/users/check", get(handlers::auth::check_username))
         .with_state(state)
 }

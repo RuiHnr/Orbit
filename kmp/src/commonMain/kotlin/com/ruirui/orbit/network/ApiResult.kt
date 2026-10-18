@@ -4,6 +4,12 @@ import io.ktor.client.call.body
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.isSuccess
 
+class ApiException(
+    val statusCode: Int,
+    val statusDescription: String,
+    message: String = "HTTP $statusCode: $statusDescription"
+) : Exception(message)
+
 /**
  * A wrapper function for safely executing Ktor HTTP calls and parsing their responses.
  * Catches network exceptions and non-2xx status codes, mapping them into Kotlin's standard [Result] type.
@@ -20,7 +26,7 @@ suspend inline fun <reified T> safeApiCall(
         if (response.status.isSuccess()) {
             Result.success(response.body<T>())
         } else {
-            Result.failure(Exception("HTTP Error: ${response.status.value} - ${response.status.description}"))
+            Result.failure(ApiException(response.status.value, response.status.description))
         }
     } catch (e: Exception) {
         Result.failure(e)

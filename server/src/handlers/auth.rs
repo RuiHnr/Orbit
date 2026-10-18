@@ -1,6 +1,9 @@
 use crate::error::IntoStatusCode;
-use crate::models::{Claims, RegisterRequest, RegisterResponse};
+use crate::models::{
+    CheckUsernameRequest, CheckUsernameResponse, Claims, RegisterRequest, RegisterResponse,
+};
 use crate::{AppState, db};
+use axum::extract::Query;
 use axum::{Json, extract::State, http::StatusCode, response::IntoResponse};
 use chrono::{Duration, Utc};
 use jsonwebtoken::{EncodingKey, Header, encode};
@@ -11,8 +14,19 @@ pub(crate) async fn register_user(
     Json(payload): Json<RegisterRequest>,
 ) -> Result<impl IntoResponse, StatusCode> {
     let user_id = db::create_user(&state.db, &payload).await.map_err(|e| {
+        // Check for PostgreSQL 23505 (unique_violation on username)
+        if let sqlx::Error::Database(ref db_err) = e
+            && db_err.code().as_deref() == Some("23505")
+        {
+            eprintln!(
+                "Registration rejected: Username '{}' is already taken",
+                payload.username
+            );
+            return StatusCode::CONFLICT; // 409
+        }
+
         eprintln!("DB-Error while registering: {}", e);
-        StatusCode::BAD_REQUEST
+        StatusCode::INTERNAL_SERVER_ERROR
     })?;
 
     println!(
@@ -40,4 +54,22 @@ pub(crate) async fn register_user(
     .or_500()?;
 
     Ok((StatusCode::OK, Json(RegisterResponse { user_id, token })).into_response())
+}
+
+pub(crate) async fn check_username(
+    State(state): State<AppState>,
+    Query(query): Query<CheckUsernameRequest>,
+) -> Result<Json<CheckUsernameResponse>, StatusCode> {
+    let username = query.username.trim();
+    if username.is_empty() {
+        return Err(StatusCode::BAD_REQUEST);
+    }
+
+    let existing_user = db::get_user_id_by_name(&state.db, username)
+        .await
+        .or_500()?;
+
+    Ok(Json(CheckUsernameResponse {
+        available: existing_user.is_none(),
+    }))
 }

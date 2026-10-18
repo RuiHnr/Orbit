@@ -22,3 +22,15 @@ pub struct Claims {
     pub sub: Uuid,  // Subject: The user's UUID
     pub exp: usize, // Expiration time (Unix timestamp)
 }
+
+/// Request sent by client to check for username availability
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+pub struct CheckUsernameRequest {
+    pub username: String,
+}
+
+/// Response sent back to client informing whether username is available
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+pub struct CheckUsernameResponse {
+    pub available: bool,
+}
