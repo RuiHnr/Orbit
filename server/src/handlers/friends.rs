@@ -20,6 +20,10 @@ pub(crate) async fn request_friend(
         .map_err(|_| StatusCode::BAD_REQUEST)?
         .ok_or(StatusCode::NOT_FOUND)?;
 
+    if target_id == authenticated_user {
+        return Err(StatusCode::BAD_REQUEST);
+    }
+
     db::send_friend_request(&state.db, authenticated_user, target_id)
         .await
         .or_500()?;

@@ -44,7 +44,7 @@ data class PreKeySignalEnvelope(
 @Serializable
 data class InboxMessage(
     @SerialName("sender_id") val senderId: String,
-    @SerialName("encrypted_payload") val encryptedPayload: SignalMessageEnvelope
+    @SerialName("encrypted_payload") val encryptedPayload: String
 )
 
 /**

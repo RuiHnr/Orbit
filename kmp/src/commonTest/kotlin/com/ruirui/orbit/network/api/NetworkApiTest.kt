@@ -63,7 +63,7 @@ class NetworkApiTest {
                     } else {
                         assertEquals("GET", request.method.value)
                         respond(
-                            content = """[{"sender_id": "alice", "encrypted_payload": {"type": "normal_message", "ciphertext": {"ratchetKey": [1,2,3], "msgNumber": 0, "previousChainLength": 0, "ciphertext": [1,2,3]}}}]""",
+                            content = """[{"sender_id": "alice", "encrypted_payload": "{\"type\": \"normal_message\", \"ciphertext\": {\"ratchetKey\": [1,2,3], \"msgNumber\": 0, \"previousChainLength\": 0, \"ciphertext\": [1,2,3]}}"}]""",
                             status = HttpStatusCode.OK,
                             headers = headersOf(
                                 HttpHeaders.ContentType to listOf("application/json"),
