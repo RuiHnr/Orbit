@@ -65,6 +65,8 @@ interface LocationRepository {
         friendId: String,
         limit: Long = 50
     ): Result<List<LocationPayload>>
+
+    suspend fun getFriendCount(): Int
 }
 
 class LocationRepositoryImpl(
@@ -160,6 +162,9 @@ class LocationRepositoryImpl(
             .executeAsList()
             .map { LocationPayload(it.lat, it.lng, it.timestamp) }
     }
+
+    override suspend fun getFriendCount(): Int =
+        db.friendQueries.getAllFriends().executeAsList().size
 
     private suspend fun encryptForFriend(friendId: String, payload: String): SignalMessageEnvelope {
         val envelope: SignalMessageEnvelope
