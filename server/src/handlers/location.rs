@@ -36,7 +36,6 @@ pub(crate) async fn receive_location(
             accepted += 1;
         }
     }
-
     Ok((StatusCode::OK, Json(SubmitLocationResponse { accepted })).into_response())
 }
 

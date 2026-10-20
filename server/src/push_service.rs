@@ -87,8 +87,10 @@ impl PushService {
     }
 
     fn init_fcm() -> (Option<Arc<CustomServiceAccount>>, Option<String>) {
-        let creds_path = env::var("FIREBASE_CREDENTIALS_PATH")
-            .unwrap_or_else(|_| "firebase-credentials.json".to_string());
+        let creds_path = env::var("GOOGLE_APPLICATION_CREDENTIALS").unwrap_or_else(|e| {
+            eprintln!("Firebase Credentials File not found: {e}");
+            "".to_owned()
+        });
 
         let mut project_id = None;
 
@@ -118,7 +120,7 @@ impl PushService {
 
     pub async fn send_fcm_sync_action(
         &self,
-        fcm_token: &str,
+        fid: &str,
         mode: SyncMode,
     ) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
         let (Some(project_id), Some(sa)) = (&self.fcm_project_id, &self.fcm_service_account) else {
@@ -137,7 +139,7 @@ impl PushService {
 
         let payload = json!({
             "message": {
-                "token": fcm_token,
+                "fid": fid,
                 "data": { "action": "sync", "mode": mode },
                 "android": { "priority": "high" },
                 "apns": {

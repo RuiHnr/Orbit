@@ -16,7 +16,7 @@ pub(crate) async fn post_device_token(
     db::upsert_device_token(
         &state.db,
         authenticated_user,
-        payload.fcm_token,
+        payload.fid,
         payload.apns_token,
     )
     .await

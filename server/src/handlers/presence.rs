@@ -22,8 +22,8 @@ async fn notify_friends_of_presence(
 
     if let Some(push_service) = &state.push_service {
         for tokens in friend_tokens {
-            if let Some(fcm) = tokens.fcm_token
-                && let Err(e) = push_service.send_fcm_sync_action(&fcm, mode).await
+            if let Some(fid) = tokens.fid
+                && let Err(e) = push_service.send_fcm_sync_action(&fid, mode).await
             {
                 eprintln!("FCM push failed: {}", e);
             }
