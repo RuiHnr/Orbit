@@ -1,5 +1,6 @@
 use crate::error::IntoStatusCode;
 use crate::models::{SubmitLocationRequest, SubmitLocationResponse};
+use crate::push_service::SyncMode;
 use crate::{AppState, db};
 use axum::{
     Extension, Json,
@@ -34,6 +35,27 @@ pub(crate) async fn receive_location(
             .await
             .or_500()?;
             accepted += 1;
+        }
+    }
+
+    let tokens = db::device_token::get_device_token(&state.db, authenticated_user)
+        .await
+        .or_500()?
+        .expect("device token not found");
+    if let Some(push_service) = &state.push_service {
+        if let Some(fcm) = tokens.fid
+            && let Err(e) = push_service
+                .send_fcm_sync_action(&fcm, SyncMode::High)
+                .await
+        {
+            eprintln!("FCM push failed: {}", e);
+        }
+        if let Some(apns) = tokens.apns_token
+            && let Err(e) = push_service
+                .send_apns_sync_action(&apns, SyncMode::High)
+                .await
+        {
+            eprintln!("APNS push failed: {}", e);
         }
     }
 

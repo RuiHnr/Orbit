@@ -8,7 +8,7 @@ pub async fn get_device_token(
     user_id: Uuid,
 ) -> Result<Option<DeviceToken>, sqlx::Error> {
     let token = sqlx::query_as::<_, DeviceToken>(
-        "SELECT fcm_token, apns_token FROM device_tokens WHERE user_id = $1",
+        "SELECT fid, apns_token FROM device_tokens WHERE user_id = $1",
     )
     .bind(user_id)
     .fetch_optional(pool)
@@ -22,7 +22,7 @@ pub async fn get_friends_device_tokens(
     user_id: Uuid,
 ) -> Result<Vec<DeviceToken>, sqlx::Error> {
     let tokens = sqlx::query_as::<_, DeviceToken>(
-        "SELECT dt.fcm_token, dt.apns_token 
+        "SELECT dt.fid, dt.apns_token
          FROM device_tokens dt
          JOIN friendships f ON (f.user_id_a = $1 AND f.user_id_b = dt.user_id) 
                             OR (f.user_id_b = $1 AND f.user_id_a = dt.user_id)
@@ -41,18 +41,18 @@ pub async fn get_friends_device_tokens(
 pub async fn upsert_device_token(
     pool: &PgPool,
     user_id: Uuid,
-    fcm_token: Option<String>,
+    fid: Option<String>,
     apns_token: Option<String>,
 ) -> Result<(), sqlx::Error> {
     sqlx::query(
-        "INSERT INTO device_tokens (user_id, fcm_token, apns_token)
+        "INSERT INTO device_tokens (user_id, fid, apns_token)
          VALUES ($1, $2, $3)
          ON CONFLICT (user_id) DO UPDATE SET
-            fcm_token = COALESCE($2, device_tokens.fcm_token),
+            fid = COALESCE($2, device_tokens.fid),
             apns_token = COALESCE($3, device_tokens.apns_token);",
     )
     .bind(user_id)
-    .bind(fcm_token)
+    .bind(fid)
     .bind(apns_token)
     .execute(pool)
     .await?;

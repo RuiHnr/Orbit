@@ -32,20 +32,15 @@ class OrbitMessagingService : FirebaseMessagingService() {
         const val LOW = "low"
     }
 
-    /**
-     * Called when a new FCM registration token is generated.
-     *
-     * @param token The new FCM token
-     */
-    override fun onNewToken(token: String) {
-        super.onNewToken(token)
+    override fun onRegistered(fid: String) {
+        super.onRegistered(fid)
         CoroutineScope(Dispatchers.IO).launch {
             OrbitApp.instance.container.deviceApi.postTokens(
-                DeviceToken(fcmToken = token, apnsToken = null)
+                DeviceToken(fid = fid, apnsToken = null)
             ).onSuccess {
-                Log.d("Orbit", "Rotated FCM token sent to server")
+                Log.d("Orbit", "FID sent to server: $fid")
             }.onFailure {
-                Log.e("Orbit", "Failed to send rotated FCM token", it)
+                Log.e("Orbit", "Failed to send FID", it)
             }
         }
     }

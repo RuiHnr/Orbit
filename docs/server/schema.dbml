@@ -53,6 +53,6 @@ Table active_sessions {
 
 Table device_tokens {
   user_id uuid [pk, ref: > users.id]
-  fcm_token varchar
+  fid varchar
   apns_token varchar
 }

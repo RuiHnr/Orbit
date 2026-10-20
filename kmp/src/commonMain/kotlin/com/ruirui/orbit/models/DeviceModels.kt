@@ -5,8 +5,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class DeviceToken(
-    @SerialName("fcm_token")
-    val fcmToken: String?,
+    val fid: String?,
     @SerialName("apns_token")
     val apnsToken: String?
 )
