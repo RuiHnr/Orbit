@@ -31,8 +31,8 @@ pub(crate) async fn receive_location(
                 &payload.receiver_id,
                 &payload.encrypted_blob,
             )
-                .await
-                .or_500()?;
+            .await
+            .or_500()?;
             accepted += 1;
         }
     }
